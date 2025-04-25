@@ -79,7 +79,6 @@ async function build() {
     });
     const htmlContent = marked.parse(content);
 
-
     const tags = {
       title: data.title || siteConfig.title,
       content: htmlContent,
@@ -88,12 +87,13 @@ async function build() {
       description: siteConfig.description,
       author: data.author || siteConfig.author ,
       year: new Date().getFullYear(),
+      backLink:  `<p><a href="${siteConfig.baseUrl || "/"}">← Back to home</a></p>`,
+      baseUrl: siteConfig.baseUrl || "/"
 
     }
     const finalHtml = applyTemplate(layout, tags);
     await fs.writeFile(outputFilename, finalHtml, "utf-8");
 
-    // Build the list for all posts from content directory
 
     const postsList = posts
       .map(
@@ -108,7 +108,6 @@ async function build() {
       <ul>${postsList}</ul>
     `;
 
-    console.log(siteConfig)
 
     const indexTags = {
       siteTitle: siteConfig.title,
@@ -116,6 +115,7 @@ async function build() {
       author: siteConfig.author ,
       year: new Date().getFullYear(),
       content: indexContent,
+      backLink: "",
       baseUrl: siteConfig.baseUrl || "/"
     }
     const indexHtml = applyTemplate(layout, indexTags);
