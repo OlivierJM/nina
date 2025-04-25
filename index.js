@@ -33,6 +33,13 @@ async function getMarkdownFiles(directory) {
   return files;
 }
 
+function applyTemplate(template, vars) {
+  return template.replace(/\{\{\s*(\w+)\s*\}\}/g, (_, key) => {
+    return vars[key] || "";
+  });
+}
+
+
 async function build() {
   // clean the build ==> dist
   await fs.remove(buildDirectory);
@@ -44,6 +51,8 @@ async function build() {
 
   const contentFiles = await getMarkdownFiles(contentDirectory);
 
+  const siteConfig = await fs.readJson(path.join(__dirname, "site.json"));
+
   const posts = [];
   for (const file of contentFiles) {
     // if (path.extname(file) !== ".md") {
@@ -52,32 +61,36 @@ async function build() {
     // const filePath = path.join(contentDirectory, file);
     const rawFile = await fs.readFile(file, "utf-8");
     const { data, content } = matter(rawFile);
-    
+
     const relativePath = path.relative(contentDirectory, file);
     // we keep the same file name as the markdown but we rename it to html
-    const outputFilename = path
-    .join(buildDirectory, relativePath)
-    .replace(/\.md$/, ".html");
-    
+    const outputDir = path
+      .join(buildDirectory, relativePath)
+      .replace(/\.md$/, "");
+
+    const outputFilename = path.join(outputDir, "index.html");
+
     await fs.ensureDir(path.dirname(outputFilename));
-    
-    console.log(outputFilename)
+
     posts.push({
       title: data.title || "No title",
       date: data.date || "No date",
-      filename: path.relative(buildDirectory, outputFilename),
+      filename: path.relative(buildDirectory, outputFilename) + "/",
     });
     const htmlContent = marked.parse(content);
-    const finalHtml = layout
-      .replace("{{ content }}", htmlContent)
-      .replace("{{ title }}", data.title)
-      .replace("{{ date }}", new Date(data.date).toDateString());
 
-    // const outputPath = path.join(buildDirectory, outputFilename);
 
-    console.log("==================")
-    console.log(outputFilename)
-    console.log("==================")
+    const tags = {
+      title: data.title || siteConfig.title,
+      content: htmlContent,
+      date: new Date(data.date).toDateString(),
+      siteTitle: siteConfig.title,
+      description: siteConfig.description,
+      author: data.author || siteConfig.author ,
+      year: new Date().getFullYear(),
+
+    }
+    const finalHtml = applyTemplate(layout, tags);
     await fs.writeFile(outputFilename, finalHtml, "utf-8");
 
     // Build the list for all posts from content directory
@@ -92,13 +105,17 @@ async function build() {
       .join("\n");
 
     const indexContent = `
-      <h1>Blog Posts</h1>
       <ul>${postsList}</ul>
     `;
-    const indexHtml = layout
-      .replace("{{ content }}", indexContent)
-      .replace("{{ title }}", "Blog Posts")
-      .replace("{{ date }}", new Date().toDateString());
+    const indexTags = {
+      siteTitle: siteConfig.title,
+      description: siteConfig.description,
+      author: siteConfig.author ,
+      year: new Date().getFullYear(),
+      content: indexContent
+    }
+    const indexHtml = applyTemplate(layout, indexTags);
+
 
     await fs.writeFile(outputFilename, finalHtml, "utf-8");
     await fs.writeFile(
