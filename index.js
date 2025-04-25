@@ -35,7 +35,7 @@ async function getMarkdownFiles(directory) {
 
 function applyTemplate(template, vars) {
   return template.replace(/\{\{\s*(\w+)\s*\}\}/g, (_, key) => {
-    return vars[key] || "";
+    return key in vars ? vars[key] : "";
   });
 }
 
@@ -75,7 +75,7 @@ async function build() {
     posts.push({
       title: data.title || "No title",
       date: data.date || "No date",
-      filename: path.relative(buildDirectory, outputFilename) + "/",
+      filename: path.relative(buildDirectory, outputFilename),
     });
     const htmlContent = marked.parse(content);
 
@@ -107,12 +107,16 @@ async function build() {
     const indexContent = `
       <ul>${postsList}</ul>
     `;
+
+    console.log(siteConfig)
+
     const indexTags = {
       siteTitle: siteConfig.title,
       description: siteConfig.description,
       author: siteConfig.author ,
       year: new Date().getFullYear(),
-      content: indexContent
+      content: indexContent,
+      baseUrl: siteConfig.baseUrl || "/"
     }
     const indexHtml = applyTemplate(layout, indexTags);
 
