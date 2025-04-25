@@ -15,6 +15,7 @@ const contentDirectory = path.join(import.meta.dirname, "content");
 const buildDirectory = path.join(import.meta.dirname, "dist");
 const publicDirectory = path.join(import.meta.dirname, "public");
 
+
 async function getMarkdownFiles(directory) {
   const entries = await fs.readdir(directory, { withFileTypes: true });
   let files = [];
@@ -72,53 +73,39 @@ async function build() {
     });
     const htmlContent = parse(content);
 
-    const tags = {
+
+    const commonTags = {
       title: data.title || siteConfig.title,
-      content: htmlContent,
-      date: new Date(data.date).toDateString(),
       siteTitle: siteConfig.title,
       description: siteConfig.description,
-      author: data.author || siteConfig.author,
       year: new Date().getFullYear(),
+      username: siteConfig.username,
+      author: data.author || siteConfig.author,
+      baseUrl: siteConfig.baseUrl || "/",
+      date: new Date(data.date).toDateString(),
+    }
+
+    const tags = {
+      content: htmlContent,
       backLink: `<p><a href="${
         siteConfig.baseUrl || "/"
       }">← Back to home</a></p>`,
-      baseUrl: siteConfig.baseUrl || "/",
     };
 
-    const finalHtml = et.render("layout", {
+    const finalHtml = et.render("post", {
       ...tags,
+      ...commonTags,
       content: htmlContent,
     });
 
-
     await fs.writeFile(outputFilename, finalHtml, "utf-8");
 
-    const postsList = posts
-      .map(
-        (post) =>
-          `<li><a href="${post.filename}">${post.title}</a> - <small>${new Date(
-            post.date
-          ).toLocaleDateString()}</small></li>`
-      )
-      .join("\n");
-
-    const indexContent = `
-      <ul>${postsList}</ul>
-    `;
-
     const indexTags = {
-      title: siteConfig.title,
-      siteTitle: siteConfig.title,
-      description: siteConfig.description,
-      // author: siteConfig.author ,
-      year: new Date().getFullYear(),
-      content: indexContent,
+      posts,
       backLink: "",
-      baseUrl: siteConfig.baseUrl || "/",
     };
-    const indexHtml = et.render("layout", indexTags);
 
+    const indexHtml = et.render("layout", {...indexTags, ...commonTags});
 
     await fs.writeFile(outputFilename, finalHtml, "utf-8");
     await fs.writeFile(
