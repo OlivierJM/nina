@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Bye World - Nina blog</title>
+  <title><%= it.title %> - <%= it.siteTitle %></title>
    <link
       rel="stylesheet"
       href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css"
@@ -10,14 +10,12 @@
 </head>
 <body>
   <nav class="container">
-    <a href="/"><strong>Nina blog</strong></a>
+    <a href="<%= it.baseUrl %>"><strong><%= it.siteTitle %></strong></a>
   </nav>
 
   <main class="container">
-    <header>
-  <h1>Nina blog</h1>
-    <p>A place I share my thoughts and projects.</p>
-  </header>    <p>Welcome to my another blog post powered by nina ssg</p>
+    <%~ include(it.partial || "partials/header", it) %>
+    <%~ it.content %>
   </main>
 </body>
 </html>

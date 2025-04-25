@@ -5,23 +5,36 @@
  * output the files in a build directory
  */
 
-const fs = require("fs-extra");
-const path = require("path");
-const matter = require("gray-matter");
-const marked = require("marked");
-const { getMarkdownFiles } = require("./helpers/getMarkdownFiles");
-const applyTemplate = require("./helpers/applyTemplates");
+import fs from "fs-extra";
+import matter from "gray-matter";
+import { parse } from "marked";
+import * as eta from "eta"
+import path from 'node:path'
 
-const contentDirectory = path.join(__dirname, "content");
-const buildDirectory = path.join(__dirname, "dist");
-const layoutDirectory = path.join(__dirname, "templates", "layout.html");
-const publicDirectory = path.join(__dirname, "public");
+const contentDirectory = path.join(import.meta.dirname, "content");
+const buildDirectory = path.join(import.meta.dirname, "dist");
+const publicDirectory = path.join(import.meta.dirname, "public");
 
-// function applyTemplate(template, vars) {
-//   return template.replace(/\{\{\s*(\w+)\s*\}\}/g, (_, key) => {
-//     return key in vars ? vars[key] : "";
-//   });
-// }
+async function getMarkdownFiles(directory) {
+  const entries = await fs.readdir(directory, { withFileTypes: true });
+  let files = [];
+  for (const entry of entries) {
+    const filePath = path.join(directory, entry.name);
+
+    if (entry.isDirectory()) {
+      const nestedFiles = await getMarkdownFiles(filePath);
+      files = files.concat(nestedFiles);
+    }
+
+    // handle when the entry is a file, meaning we've reached the end of the tree
+    else if (entry.isFile() && path.extname(entry.name) === ".md") {
+      files.push(filePath);
+    }
+  }
+  return files;
+}
+
+const et = new eta.Eta({ views: path.join(import.meta.dirname, "templates") })
 
 async function build() {
   // clean the build ==> dist
@@ -30,11 +43,9 @@ async function build() {
 
   await fs.copy(publicDirectory, buildDirectory);
 
-  const layout = await fs.readFile(layoutDirectory, "utf-8");
-
   const contentFiles = await getMarkdownFiles(contentDirectory);
 
-  const siteConfig = await fs.readJson(path.join(__dirname, "site.json"));
+  const siteConfig = await fs.readJson(path.join(import.meta.dirname, "site.json"));
 
   const posts = [];
   for (const file of contentFiles) {
@@ -47,8 +58,7 @@ async function build() {
 
     const relativePath = path.relative(contentDirectory, file);
     // we keep the same file name as the markdown but we rename it to html
-    const outputDir = path
-      .join(buildDirectory, relativePath)
+    const outputDir = path.join(buildDirectory, relativePath)
       .replace(/\.md$/, "");
 
     const outputFilename = path.join(outputDir, "index.html");
@@ -60,7 +70,7 @@ async function build() {
       date: data.date || "No date",
       filename: path.relative(buildDirectory, outputFilename),
     });
-    const htmlContent = marked.parse(content);
+    const htmlContent = parse(content);
 
     const tags = {
       title: data.title || siteConfig.title,
@@ -75,7 +85,13 @@ async function build() {
       }">← Back to home</a></p>`,
       baseUrl: siteConfig.baseUrl || "/",
     };
-    const finalHtml = applyTemplate(layout, tags);
+
+    const finalHtml = et.render("layout", {
+      ...tags,
+      content: htmlContent,
+    });
+
+
     await fs.writeFile(outputFilename, finalHtml, "utf-8");
 
     const postsList = posts
@@ -92,6 +108,7 @@ async function build() {
     `;
 
     const indexTags = {
+      title: siteConfig.title,
       siteTitle: siteConfig.title,
       description: siteConfig.description,
       // author: siteConfig.author ,
@@ -100,7 +117,8 @@ async function build() {
       backLink: "",
       baseUrl: siteConfig.baseUrl || "/",
     };
-    const indexHtml = applyTemplate(layout, indexTags);
+    const indexHtml = et.render("layout", indexTags);
+
 
     await fs.writeFile(outputFilename, finalHtml, "utf-8");
     await fs.writeFile(
