@@ -1,4 +1,3 @@
-```markdown
 # nina
 
 **nina** is a minimal static site generator powered by [Eta](https://eta.js.org/) templates and styled with [Pico.css](https://picocss.com/). It converts your Markdown files into clean, responsive HTML pages—perfect for just simple(e) blogs. This is not meant for documentation as there are many features that nina doesnt support.
@@ -20,6 +19,7 @@ My initial plan was to keep this dependency free but I didn't want to deal with 
 
 ## 📁 Project Structure
 
+```bash
 nina/  
 ├── content/      # markdown articles   
 ├── public/       
@@ -34,7 +34,7 @@ nina/
 ├── index.js      
 ├── package.json   
 └── README.md   
-
+```
 ---
 
 ## ⚙️ Configuration
@@ -97,4 +97,3 @@ Create a `site.json` file in the root:
     ```bash
     npx serve dist
     ```
-```
