@@ -9,36 +9,19 @@ const fs = require("fs-extra");
 const path = require("path");
 const matter = require("gray-matter");
 const marked = require("marked");
+const { getMarkdownFiles } = require("./helpers/getMarkdownFiles");
+const applyTemplate = require("./helpers/applyTemplates");
 
 const contentDirectory = path.join(__dirname, "content");
 const buildDirectory = path.join(__dirname, "dist");
 const layoutDirectory = path.join(__dirname, "templates", "layout.html");
 const publicDirectory = path.join(__dirname, "public");
 
-async function getMarkdownFiles(directory) {
-  const entries = await fs.readdir(directory, { withFileTypes: true });
-  let files = [];
-  for (const entry of entries) {
-    const filePath = path.join(directory, entry.name);
-
-    if (entry.isDirectory()) {
-      const nestedFiles = await getMarkdownFiles(filePath);
-      files = files.concat(nestedFiles);
-    }
-    // handle when the entry is a file, meaning we've reached the end of the tree
-    else if (entry.isFile() && path.extname(entry.name) === ".md") {
-      files.push(filePath);
-    }
-  }
-  return files;
-}
-
-function applyTemplate(template, vars) {
-  return template.replace(/\{\{\s*(\w+)\s*\}\}/g, (_, key) => {
-    return key in vars ? vars[key] : "";
-  });
-}
-
+// function applyTemplate(template, vars) {
+//   return template.replace(/\{\{\s*(\w+)\s*\}\}/g, (_, key) => {
+//     return key in vars ? vars[key] : "";
+//   });
+// }
 
 async function build() {
   // clean the build ==> dist
@@ -85,15 +68,15 @@ async function build() {
       date: new Date(data.date).toDateString(),
       siteTitle: siteConfig.title,
       description: siteConfig.description,
-      author: data.author || siteConfig.author ,
+      author: data.author || siteConfig.author,
       year: new Date().getFullYear(),
-      backLink:  `<p><a href="${siteConfig.baseUrl || "/"}">← Back to home</a></p>`,
-      baseUrl: siteConfig.baseUrl || "/"
-
-    }
+      backLink: `<p><a href="${
+        siteConfig.baseUrl || "/"
+      }">← Back to home</a></p>`,
+      baseUrl: siteConfig.baseUrl || "/",
+    };
     const finalHtml = applyTemplate(layout, tags);
     await fs.writeFile(outputFilename, finalHtml, "utf-8");
-
 
     const postsList = posts
       .map(
@@ -108,18 +91,16 @@ async function build() {
       <ul>${postsList}</ul>
     `;
 
-
     const indexTags = {
       siteTitle: siteConfig.title,
       description: siteConfig.description,
-      author: siteConfig.author ,
+      // author: siteConfig.author ,
       year: new Date().getFullYear(),
       content: indexContent,
       backLink: "",
-      baseUrl: siteConfig.baseUrl || "/"
-    }
+      baseUrl: siteConfig.baseUrl || "/",
+    };
     const indexHtml = applyTemplate(layout, indexTags);
-
 
     await fs.writeFile(outputFilename, finalHtml, "utf-8");
     await fs.writeFile(
