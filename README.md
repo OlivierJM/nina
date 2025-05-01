@@ -6,18 +6,18 @@ My initial plan was to keep this dependency free but I didn't want to deal with 
 
 ---
 
-## ✨ Features
+## Features
 
 - 📝 Converts Markdown to HTML
-- 🎨 Supports layout templates using Eta
-- 📁 Auto-discovers nested content, we recursively build children directories
+- 🎨 Supports layout templates using Eta(feel free to add yours in templates/)
+- 📁 Auto-discovers nested content, we recursively build children directories & their files
 - 🚀 Builds a complete site with an index and individual post pages
 - 🌐 Uses Pico.css for beautiful defaults
 - 🗂️ Copies static assets to the final build
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```bash
 nina/  
@@ -37,7 +37,7 @@ nina/
 ```
 ---
 
-## ⚙️ Configuration
+## Configuration
 
 Create a `site.json` file in the root:
 
@@ -46,13 +46,15 @@ Create a `site.json` file in the root:
   "title": "Blog",
   "description": "blog for my thoughts built with nina",
   "author": "John",
-  "baseUrl": "/"
+  "baseUrl": "/",
+  "github": "https://github.com/username_or_repo", // This is not required
+  "username": "username" 
 }
 ```
 
 ---
 
-## 🚧 How to Use
+## Usage
 
 1.  **Clone the repo**
 
@@ -92,7 +94,7 @@ Create a `site.json` file in the root:
 
 4.  **View your site**
 
-    Open `dist/index.html` in a browser or serve it locally:
+    Open `dist/index.html` in a browser or serve it locally
 
     ```bash
     npx serve dist
