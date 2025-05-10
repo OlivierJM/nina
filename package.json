@@ -5,11 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "concurrently \"node watch.js\" \"live-server dist --quiet\"",
     "build": "node index.js"
-  },
-  "bin": {
-    "nina": "./bin/nina.js"
   },
   "keywords": [],
   "author": "",
@@ -20,10 +16,5 @@
     "fs-extra": "^11.3.0",
     "gray-matter": "^4.0.3",
     "marked": "^15.0.8"
-  },
-  "devDependencies": {
-    "chokidar": "^4.0.3",
-    "concurrently": "^9.1.2",
-    "live-server": "^1.2.0"
   }
 }
