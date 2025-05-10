@@ -10,10 +10,13 @@ import matter from "gray-matter";
 import { parse } from "marked";
 import * as eta from "eta"
 import path from 'node:path'
+import process from 'node:process'
 
-const contentDirectory = path.join(import.meta.dirname, "content");
-const buildDirectory = path.join(import.meta.dirname, "dist");
-const publicDirectory = path.join(import.meta.dirname, "public");
+const dirName = path.resolve(process.argv[2] || ".");
+
+const contentDirectory = path.join(dirName, "content");
+const buildDirectory = path.join(dirName, "dist");
+const publicDirectory = path.join(dirName, "public");
 
 
 async function getMarkdownFiles(directory) {
@@ -35,9 +38,14 @@ async function getMarkdownFiles(directory) {
   return files;
 }
 
-const et = new eta.Eta({ views: path.join(import.meta.dirname, "templates") })
+const et = new eta.Eta({ views: path.join(dirName, "templates") })
 
 async function build() {
+
+  if (!fs.existsSync(contentDirectory)) {
+    console.error(`Missing folder, no valid content found at ${contentDirectory}`);
+    process.exit(1);
+  }
   // clean the build ==> dist
   await fs.remove(buildDirectory);
   await fs.mkdirp(buildDirectory);
@@ -49,7 +57,7 @@ async function build() {
 
   const contentFiles = await getMarkdownFiles(contentDirectory);
 
-  const siteConfig = await fs.readJson(path.join(import.meta.dirname, "site.json"));
+  const siteConfig = await fs.readJson(path.join(dirName, "site.json"));
 
   const posts = [];
   for (const file of contentFiles) {
