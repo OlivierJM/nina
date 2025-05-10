@@ -52,7 +52,7 @@ Create a `site.json` file in the root:
 
 ---
 
-## 🚧 How to Use
+## 🚧 How to Use this repo
 
 1.  **Clone the repo**
 
@@ -98,3 +98,7 @@ Create a `site.json` file in the root:
     npx serve dist
     ```
 ```
+
+## 🚧 How to Use nina 
+
+use npx to use `npx olivierjm/nina`
