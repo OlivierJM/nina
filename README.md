@@ -54,7 +54,7 @@ Create a `site.json` file in the root:
 
 ---
 
-## 🚧 How to Use this repo
+## How to Use this repo
 
 1.  **Clone the repo**
 
@@ -99,8 +99,8 @@ Create a `site.json` file in the root:
     ```bash
     npx serve dist
     ```
-```
 
-## 🚧 How to Use nina 
+
+##  How to Use nina 
 
 use npx to use `npx olivierjm/nina`
