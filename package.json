@@ -8,6 +8,9 @@
     "dev": "concurrently \"node watch.js\" \"live-server dist --quiet\"",
     "build": "node index.js"
   },
+  "bin": {
+    "nina": "./bin/nina.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
