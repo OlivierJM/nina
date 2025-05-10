@@ -42,6 +42,9 @@ async function build() {
   await fs.remove(buildDirectory);
   await fs.mkdirp(buildDirectory);
 
+  if (!fs.existsSync(publicDirectory)) {
+    await fs.mkdirp(publicDirectory);
+  }
   await fs.copy(publicDirectory, buildDirectory);
 
   const contentFiles = await getMarkdownFiles(contentDirectory);
