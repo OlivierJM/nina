@@ -82,7 +82,7 @@ Create a `site.json` file in the root:
 3.  **Run the build script**
 
     ```bash
-    node bin/index.js
+    node index.js
     ```
 
     This will:
@@ -99,8 +99,21 @@ Create a `site.json` file in the root:
     ```bash
     npx serve dist
     ```
+Note:  
+We export the following variables that can currently be in either post or layout, also checkout the partials inside `templates/partials` directory, With the following list, you can go ahead and create your own theme or nina started based on these, You would just need to change how the `layout.eta` and `post.eta` are structured to provide your own custom layout. 
+
+    - `title` ==> This is the main title of the article, if not provided we fallback to the site title from the config,  
+    - `siteTitle` ==> This is more of a subtitle for the site, it comes from the config,  
+    - `description` ==> Description of the site, also comes from the config,  
+    - `year` ==> This is the year that the article was published,   
+    - `username` ==> This is the github username, it comes from the config,  
+    - `author` ==> This is the article/blog author, it should be provided in the blog article markdown,   
+    - `baseUrl` ==> we default to /,   
+    - `date` ==> date the article was published,  
+    - `content` ==> This is the main content of the article, formatted in markdown but exported in html,   
+    - `backLink` ==> This is the link to route back to from each generated post,   
+ 
+Note that some of the variables above may differ based on whether they are used from the home page or an individual post.  
 
 
-##  How to Use nina 
 
-use npx to use `npx olivierjm/nina`
