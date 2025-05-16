@@ -1,3 +1,4 @@
+
 # nina
 
 **nina** is a minimal static site generator powered by [Eta](https://eta.js.org/) templates and styled with [Pico.css](https://picocss.com/). It converts your Markdown files into clean, responsive HTML pages—perfect for just simple(e) blogs. This is not meant for documentation as there are many features that nina doesnt support.
@@ -8,12 +9,12 @@ My initial plan was to keep this dependency free but I didn't want to deal with 
 
 ## Features
 
-- 📝 Converts Markdown to HTML
-- 🎨 Supports layout templates using Eta(feel free to add yours in templates/)
-- 📁 Auto-discovers nested content, we recursively build children directories & their files
-- 🚀 Builds a complete site with an index and individual post pages
-- 🌐 Uses Pico.css for beautiful defaults
-- 🗂️ Copies static assets to the final build
+- Converts Markdown to HTML
+- Supports layout templates using Eta(feel free to add yours in templates/)
+- Auto-discovers nested content, we recursively build children directories & their files
+- Builds a complete site with an index and individual post pages
+- Uses Pico.css for beautiful defaults
+- Copies static assets to the final build
 
 ---
 
@@ -100,8 +101,8 @@ Create a `site.json` file in the root:
     npx serve dist
     ```
 Note:  
-We export the following variables that can currently be in either post or layout, also checkout the partials inside `templates/partials` directory, With the following list, you can go ahead and create your own theme or nina started based on these, You would just need to change how the `layout.eta` and `post.eta` are structured to provide your own custom layout. 
-
+We export the following variables that can currently be in either post or layout, also checkout the partials inside `templates/partials` directory, With the following list, you can go ahead and create your own theme or nina started based on these, You would just need to change how the `layout.eta` and `post.eta` are structured to provide your own custom layout.   
+<br />
     - `title` ==> This is the main title of the article, if not provided we fallback to the site title from the config,  
     - `siteTitle` ==> This is more of a subtitle for the site, it comes from the config,  
     - `description` ==> Description of the site, also comes from the config,  
@@ -114,6 +115,4 @@ We export the following variables that can currently be in either post or layout
     - `backLink` ==> This is the link to route back to from each generated post,   
  
 Note that some of the variables above may differ based on whether they are used from the home page or an individual post.  
-
-
 
